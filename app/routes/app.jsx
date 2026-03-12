@@ -14,9 +14,8 @@ export const loader = async ({ request }) => {
 
 export default function App() {
   const { apiKey } = useLoaderData();
-
   return (
-     <AppProvider isEmbeddedApp apiKey={apiKey} forceRedirect>
+    <AppProvider isEmbeddedApp apiKey={apiKey}>
       <NavMenu>
         <a href="/app" rel="home">Dashboard</a>
         <a href="/app/scan">Scan Products</a>
