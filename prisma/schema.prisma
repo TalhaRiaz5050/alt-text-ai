@@ -33,14 +33,3 @@ model UsageRecord {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
-```
-
-Click **Commit changes** → **Commit directly to main** → **Commit**.
-
----
-
-**Step 2 — Update Railway start command**
-
-Railway → alt-text-ai → **Settings → Deploy → Start command**, change to:
-```
-npx prisma migrate deploy && npm run start
