@@ -1,5 +1,6 @@
-import { login } from "../shopify.server";
+import { authenticate } from "../shopify.server";
 
 export async function loader({ request }) {
-  return login(request);
+  await authenticate.admin(request);
+  return null;
 }
