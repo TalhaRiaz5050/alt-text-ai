@@ -33,3 +33,12 @@ model UsageRecord {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+model AltTextLog {
+  id        String   @id @default(cuid())
+  shop      String
+  imageUrl  String
+  altText   String
+  createdAt DateTime @default(now())
+
+  @@index([shop])
+}
