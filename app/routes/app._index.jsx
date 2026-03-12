@@ -66,61 +66,6 @@ export const loader = async ({ request }) => {
   };
 };
 
-export const loader = async ({ request }) => {
-  const { admin, session } = await authenticate.admin(request);
-  const shop = session.shop;
-
-  // Get usage stats
-  const usage = await getShopUsage(shop);
-
-  // Get count of images missing alt text (scan just first 50 for speed)
-  const response = await admin.graphql(`
-    query {
-      products(first: 50) {
-        edges {
-          node {
-            id
-            title
-            images(first: 10) {
-              edges {
-                node {
-                  id
-                  altText
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  `);
-  const data = await response.json();
-
-  let missingCount = 0;
-  let totalImages = 0;
-  for (const { node: product } of data.data.products.edges) {
-    for (const { node: image } of product.images.edges) {
-      totalImages++;
-      if (!image.altText || image.altText.trim() === "") missingCount++;
-    }
-  }
-
-  // Get recent alt text logs
-  const recentLogs = await db.altTextLog.findMany({
-    where: { shop },
-    orderBy: { createdAt: "desc" },
-    take: 5,
-  });
-
-  return {
-    shop,
-    usage,
-    missingCount,
-    totalImages,
-    recentLogs,
-    isPro: usage.plan === "pro",
-  };
-};
 
 export default function Dashboard() {
   const { usage, missingCount, totalImages, recentLogs, isPro } = useLoaderData();
