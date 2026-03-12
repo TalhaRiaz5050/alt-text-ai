@@ -6,10 +6,26 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+```
 
+Commit the change.
+
+---
+
+**Step 3 — Update Railway variables**
+
+In Railway → your app service → **Variables**, delete the old `DATABASE_URL` line entirely. Railway will automatically inject the PostgreSQL `DATABASE_URL` from the new database.
+
+---
+
+**Step 4 — Update start command**
+
+In Railway → **Settings → Deploy → Start command**, change to:
+```
+npx prisma migrate deploy && npm run start
 model Session {
   id            String    @id
   shop          String
