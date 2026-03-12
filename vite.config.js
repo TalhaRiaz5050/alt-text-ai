@@ -1,5 +1,5 @@
 import { vitePlugin as remix } from "@remix-run/dev";
-import { defineConfig, type UserConfig } from "vite";
+import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 installGlobals({ nativeFetch: true });
@@ -51,4 +51,4 @@ export default defineConfig({
   build: {
     assetsInlineLimit: 0,
   },
-}) satisfies UserConfig;
+});
