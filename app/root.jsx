@@ -5,6 +5,14 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
+import { useEffect, useState } from "react";
+
+function ClientOnly({ children }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
+  return children;
+}
 
 export default function App() {
   return (
@@ -21,7 +29,9 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Outlet />
+        <ClientOnly>
+          <Outlet />
+        </ClientOnly>
         <ScrollRestoration />
         <Scripts />
       </body>
