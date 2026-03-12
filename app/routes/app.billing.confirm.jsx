@@ -3,7 +3,7 @@ import { authenticate } from "../../shopify.server";
 
 
 export const loader = async ({ request }) => {
-  import { upgradeShopToPro } from "../../services/usage.server";
+  const { upgradeShopToPro } = await import("../../services/usage.server");
   const { session } = await authenticate.admin(request);
   const url = new URL(request.url);
   const chargeId = url.searchParams.get("charge_id");
