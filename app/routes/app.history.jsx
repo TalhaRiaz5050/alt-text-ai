@@ -19,7 +19,7 @@ import { json } from "@remix-run/node";
 const PER_PAGE = 20;
 
 export const loader = async ({ request }) => {
-  import { db } from "../db.server";
+  const { db } = await import("../db.server");
   const { session } = await authenticate.admin(request);
   const url = new URL(request.url);
   const page = parseInt(url.searchParams.get("page") || "1");
