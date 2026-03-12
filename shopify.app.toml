@@ -1,0 +1,24 @@
+name = "AI Alt Text Generator"
+client_id = "{{ SHOPIFY_API_KEY }}"
+application_url = "{{ SHOPIFY_APP_URL }}"
+embedded = true
+
+[access_scopes]
+scopes = "write_products,read_products"
+
+[auth]
+redirect_urls = [
+  "{{ SHOPIFY_APP_URL }}/auth/callback",
+  "{{ SHOPIFY_APP_URL }}/auth/shopify/callback",
+  "{{ SHOPIFY_APP_URL }}/api/auth/callback"
+]
+
+[webhooks]
+api_version = "2025-01"
+
+  [[webhooks.subscriptions]]
+  topics = ["app/uninstalled"]
+  uri = "/webhooks/app-uninstalled"
+
+[pos]
+embedded = false
