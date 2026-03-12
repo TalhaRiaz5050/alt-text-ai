@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -9,23 +6,7 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-```
 
-Commit the change.
-
----
-
-**Step 3 — Update Railway variables**
-
-In Railway → your app service → **Variables**, delete the old `DATABASE_URL` line entirely. Railway will automatically inject the PostgreSQL `DATABASE_URL` from the new database.
-
----
-
-**Step 4 — Update start command**
-
-In Railway → **Settings → Deploy → Start command**, change to:
-```
-npx prisma migrate deploy && npm run start
 model Session {
   id            String    @id
   shop          String
@@ -44,23 +25,22 @@ model Session {
   emailVerified Boolean?  @default(false)
 }
 
-model ShopUsage {
-  id            String   @id @default(cuid())
-  shop          String   @unique
-  plan          String   @default("free") // free, pro
-  imagesUsed    Int      @default(0)
-  imagesLimit   Int      @default(25)     // free = 25/month, pro = unlimited
-  billingId     String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+model UsageRecord {
+  id        String   @id @default(cuid())
+  shop      String
+  count     Int      @default(0)
+  month     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
+```
 
-model AltTextLog {
-  id          String   @id @default(cuid())
-  shop        String
-  productId   String
-  imageId     String
-  imageUrl    String
-  altText     String
-  createdAt   DateTime @default(now())
-}
+Click **Commit changes** → **Commit directly to main** → **Commit**.
+
+---
+
+**Step 2 — Update Railway start command**
+
+Railway → alt-text-ai → **Settings → Deploy → Start command**, change to:
+```
+npx prisma migrate deploy && npm run start
