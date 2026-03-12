@@ -11,7 +11,161 @@ import {
   Badge,
   Thumbnail,
   Banner,
-  SkeletonBodyText,
+import { useState, useCallback } from "react";
+import { useLoaderData, useFetcher, useNavigate } from "@remix-run/react";
+import {
+    Page,
+    Layout,
+    Card,
+    Text,
+    Button,
+    BlockStack,
+    InlineStack,
+    Badge,
+    Thumbnail,
+    Banner,
+    SkeletonBodyText,
+    Divider,
+    Checkbox,
+    EmptyState,
+    Spinner,
+    Toast,
+    Frame,
+    TextField,
+} from "@shopify/polaris";
+import { authenticate } from "../shopify.server";
+import { json } from "@remix-run/node";
+
+export const loader = async ({ request }) => {
+    const { getImagesMissingAltText } = await import("../services/shopify.server");
+    const { canProcessImages } = await import("../services/usage.server");
+    const { admin, session } = await authenticate.admin(request);
+    const shop = session.shop;
+    const missingImages = await getImagesMissingAltText(admin);
+    const { allowed, remaining, usage } = await canProcessImages(shop, 1);
+    return json({
+          missingImages,
+          remaining: usage.plan === "pro" ? 9999 : remaining,
+          isPro: usage.plan === "pro",
+          imagesUsed: usage.imagesUsed,
+          imagesLimit: usage.imagesLimit,
+    });
+};
+
+export const action = async ({ request }) => {
+    const { generateBatchAltText } = await import("../services/claude.server");
+    const { updateImageAltText } = await import("../services/shopify.server");
+    const { incrementUsage, logAltText, canProcessImages } = await import("../services/usage.server");
+    const { admin, session } = await authenticate.admin(request);
+    const shop = session.shop;
+    const formData = await request.formData();
+    const intent = formData.get("intent");
+  
+    if (intent === "generate") {
+        i m pcoornts t{  iumsaegSetsaJtseo,n  u=s efCoarlmlDbaatcak. g}e tf(r"oimm a"greesa"c)t;"
+          ; 
+       i m pcoornts t{  iumsaegLeosa d=e rJDSaOtNa.,p aursseeF(eitmcahgeers,J suosne)N;a
+         v i g a tceo n}s tf r{o ma l"l@orweemdi,x -rreumna/irneiancgt," ;u
+         siamgpeo r}t  ={ 
+         a w aPiatg ec,a
+         n P rLoacyeosustI,m
+           a g eCsa(rsdh,o
+                    p ,  Tiemxatg,e
+             s . lBeuntgttohn),;
+      
+          B l oicfk S(t!aaclkl,o
+                      w e dI n&l&i nuesSatgaec.kp,l
+                        a n  B!a=d=g e",p
+                          r o "T)h u{m
+                          b n a i l , 
+                          r e tBuarnnn ejrs,o
+                          n ( {S keerlreotro:n B`oFdryeTee xlti,m
+                          i t  Drievaicdheerd,.
+                            U pCghreacdkeb otxo, 
+                            P r oE mtpot ypSrtoactees,s
+                              u nSlpiimninteerd, 
+                              i m aTgoeass.t`,,
+                                 r eFsrualmtes,:
+                                 [ ]T e}x)t;F
+                            i e l d ,}
+  
+}   f r ocmo n"s@ts hiompaigfeys/TpooPlraorciess"s; 
+=i mupsoargte .{p laaunt h=e=n=t i"cpartoe"  }?  firmoamg e"s. .:/ sihmoapgiefsy..ssleircvee(r0",; 
+riemmpaoirnti n{g )j;s
+  o n   }  cfornosmt  "r@erseumlitxs- r=u na/wnaoidte "g;e
+  n
+    eerxaptoerBta tccohnAsltt Tleoxatd(eirm a=g eassTyonPcr o(c{e srse)q;u
+      e s t   }r)e t=u>r n{ 
+      j s ocno(n{s tr e{s uglettsI,m aegrersoMri:s sniunlglA l}t)T;e
+        x t  }}
+ 
+=   aiwfa i(ti nitmepnotr t=(="=. ."/aspeprlvyi"c)e s{/
+  s h o p icfoyn.sste rrveesru"l)t;s
+  J s ocno n=s tf o{r mcDaantPar.ogceets(s"Irmeasguelst s}" )=; 
+                    a w a i tc oinmspto rrte(s"u.l.t/ss e=r vJiScOeNs./puasrasgee(.rseesruvletrs"J)s;o
+                      n ) ;c
+                        o n s t  c{o nasdtm ianp,p lsieesds i=o n[ ]}; 
+                    =   a w aciotn satu tehrernotrisc a=t e[.]a;d
+                      m i n ( rfeoqru e(scto)n;s
+                        t   rceosnusltt  sohfo pr e=s usletsss)i o{n
+                          . s h o p ; 
+                                                                   i f  c(o!nrsets umlits.ssienlgeIcmtaegde s| |=  !arweasiutl tg.eatlItmTaegxets)M icsosnitnignAulet;T
+                                                                     e x t ( a d mtirny) ;{
+                                                                       
+                                                                           c o n s t   {a waalilto wuepdd,a treeImmaaigneiAnlgt,T euxsta(gaed m}i n=,  arweasiutl tc.apnrPordouccetsIsdI,m argeessu(lsth.oipm,a g1e)I;d
+                                                                             ,   rreestuulrtn. ajlstoTne(x{t
+                                                                             ) ; 
+                                                                           m i s s i n gaIwmaaigte sl,o
+                                                                             g A l t Treexmta(isnhionpg,:  ruessauglet..pplraond u=c=t=I d",p rroe"s u?l t9.9i9m9a g:e Irde,m ariensiunlgt,.
+                                                                               i m a g eiUsrPlr,o :r eussualgte..aplltaTne x=t=)=; 
+                                                                       " p r o " , 
+                                                                             a p pilmiaegde.spUussehd(:r eussualgte..iimmaaggeeIsdU)s;e
+                                                                         d , 
+                                                                           }i mcaagtecshL i(meirtr:o ru)s a{g
+                                                                       e . i m a g e s Leirmriotr,s
+                                                                         . p u}s)h;(
+                                                                       {} ;i
+                                                                       m
+                                                                         aegxepIodr:t  rceosnusltt .aicmtaigoenI d=,  aesryrnocr :( {e rrreoqru.emsets s}a)g e= >} ){;
+                                                                                                                                                                     
+                                                                                                                                                                         c o n s t} 
+{   g e n}e
+  r a t e Biaft c(haAplptlTieexdt. l}e n=g tahw a>i t0 )i m{p
+    o r t ( " . .a/wsaeirtv iicnecsr/ecmleanutdUes.asgeer(vsehro"p),; 
+                                                            a p pcloinesdt. l{e nugptdha)t;e
+                                                              I m a g e}A
+                                                              l t T e xrte t}u r=n  ajwsaoint( {i mappoprlti(e"d.:. /aspeprlviiecde.sl/esnhgotphi,f ye.rsreorrvse,r "s)u;c
+    c e scso:n sttr u{e  i}n)c;r
+      e m e}n
+                                                                                                t
+                                                                                                U s argeet,u rlno gjAslotnT(e{x te,r rcoarn:P r"oUcneksnsoIwmna gienst e}n t="  a}w)a;i
+    t} ;import("../services/usage.server");
+  const { admin, session } = await authenticate.admin(request);
+  const shop = session.shop;
+  const formData = await request.formData();
+  const intent = formData.get("intent");
+
+  if (intent === "generate") {
+        const imagesJson = formData.get("images");
+        const images = JSON.parse(imagesJson);
+        const { allowed, remaining, usage } = await canProcessImages(shop, images.length);
+        if (!allowed && usage.plan !== "pro") {
+                return json({ error: `Free limit reached. Upgrade to Pro to process unlimited images.`, results: [] });
+        }
+        const imagesToProcess = usage.plan === "pro" ? images : images.slice(0, remaining);
+        const results = await generateBatchAltText(imagesToProcess);
+        return json({ results, error: null });
+  }
+
+  if (intent === "apply") {
+        const resultsJson = formData.get("results");
+        const results = JSON.parse(resultsJson);
+        const applied = [];
+        const errors = [];
+        for (const result of results) {
+                if (!result.selected || !result.altText) continue;
+                try {
+                          await updateImageAltText(admin, reSkeletonBodyText,
   Divider,
   Checkbox,
   EmptyState,
