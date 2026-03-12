@@ -16,9 +16,55 @@ import {
 } from "@shopify/polaris";
 import { ImageIcon, StarFilledIcon, AlertCircleIcon } from "@shopify/polaris-icons";
 import { authenticate } from "../shopify.server";
-import { getShopUsage } from "../services/usage.server";
-import { getImagesMissingAltText } from "../services/shopify.server";
-import { db } from "../db.server";
+export const loader = async ({ request }) => {
+  const { getShopUsage } = await import("../services/usage.server");
+  const { db } = await import("../db.server");
+  const { admin, session } = await authenticate.admin(request);
+  const shop = session.shop;
+  const usage = await getShopUsage(shop);
+  const response = await admin.graphql(`
+    query {
+      products(first: 50) {
+        edges {
+          node {
+            id
+            title
+            images(first: 10) {
+              edges {
+                node {
+                  id
+                  altText
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `);
+  const data = await response.json();
+  let missingCount = 0;
+  let totalImages = 0;
+  for (const { node: product } of data.data.products.edges) {
+    for (const { node: image } of product.images.edges) {
+      totalImages++;
+      if (!image.altText || image.altText.trim() === "") missingCount++;
+    }
+  }
+  const recentLogs = await db.altTextLog.findMany({
+    where: { shop },
+    orderBy: { createdAt: "desc" },
+    take: 5,
+  });
+  return {
+    shop,
+    usage,
+    missingCount,
+    totalImages,
+    recentLogs,
+    isPro: usage.plan === "pro",
+  };
+};
 
 export const loader = async ({ request }) => {
   const { admin, session } = await authenticate.admin(request);
